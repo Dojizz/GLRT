@@ -153,9 +153,13 @@
     <None Include="Shaders\vertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="data.h" />
+    <ClInclude Include="glfwInit.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="RT_Screen.h" />
     <ClInclude Include="shader.h" />
+    <ClInclude Include="TimeRecord.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -49,5 +49,17 @@
     <ClInclude Include="Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="data.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="glfwInit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RT_Screen.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeRecord.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
