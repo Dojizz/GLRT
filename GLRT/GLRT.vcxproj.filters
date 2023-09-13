@@ -32,6 +32,12 @@
     <None Include="Shaders\vertexShader.glsl">
       <Filter>资源文件\Shaders</Filter>
     </None>
+    <None Include="Shaders\rectShader.frag">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
+    <None Include="Shaders\rectShader.vert">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">

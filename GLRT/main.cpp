@@ -36,6 +36,16 @@ float fov = 45.0f;
 float deltaTime = 0.0f;	
 float lastFrame = 0.0f;
 
+const float ScreenVertices[] = {
+	// position in normalized space     // texture coord
+	-1.f,	1.f,	0.f, 0.f, 1.f, // first triangle
+	-1.f,	-1.f,	0.f, 0.f, 0.f,
+	1.f,	1.f,	0.f, 1.f, 1.f,
+	-1.f,	-1.f,	0.f, 0.f, 0.f, // second triangle
+	1.f,	1.f,	0.f, 1.f, 1.f,
+	1.f,	-1.f,	0.f, 1.f, 0.f
+};
+
 int main()
 {
 	// GLFW
@@ -56,18 +66,26 @@ int main()
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
 
-	Shader ourShader("./Shaders/vertexShader.glsl", "./Shaders/fragmentShader.glsl");
-
-	Model ourModel("../resource/bunny.obj");
-
-	glEnable(GL_DEPTH_TEST);
+	Shader ourShader("./Shaders/rectShader.vert", "./Shaders/rectShader.frag");
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(ScreenVertices), ScreenVertices, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -76,23 +94,11 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput(window);
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		glBindVertexArray(VAO);
 		ourShader.use();
-		ourShader.setVec3("viewPos", cameraPos);
-
-		glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-		ourShader.setMat4("projection", projection);
-		glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
-		ourShader.setMat4("view", view);
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); 
-		model = glm::scale(model, glm::vec3(5.0f, 5.0f, 5.0f));	
-		ourShader.setMat4("model", model);
-		ourModel.Draw(ourShader);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
