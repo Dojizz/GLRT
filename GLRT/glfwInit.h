@@ -8,20 +8,21 @@ void processInput(GLFWwindow* window)
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
-	float cameraSpeed = static_cast<float>(2.5 * deltaTime);
+	float camera_move_length = static_cast<float>(2.5 * rec.GetDeltaTime());
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		cameraPos += cameraSpeed * cameraFront;
+		cam.Move(camera_move_length);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		cameraPos -= cameraSpeed * cameraFront;
+		cam.Move(-camera_move_length);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		cam.Move(camera_move_length, cam.GetRight() * (-camera_move_length));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+		cam.Move(camera_move_length, cam.GetRight() * (camera_move_length));
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	cam.SetWidthHeight(width, height);
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -45,28 +46,25 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	xoffset *= sensitivity;
 	yoffset *= sensitivity;
 
-	yaw += xoffset;
-	pitch += yoffset;
+	cam.m_yaw += xoffset;
+	cam.m_pitch += yoffset;
 
-	if (pitch > 89.0f)
-		pitch = 89.0f;
-	if (pitch < -89.0f)
-		pitch = -89.0f;
+	if (cam.m_pitch > 89.0f)
+		cam.m_pitch = 89.0f;
+	if (cam.m_pitch < -89.0f)
+		cam.m_pitch = -89.0f;
 
 	glm::vec3 front;
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	cameraFront = glm::normalize(front);
+	front.x = cos(glm::radians(cam.m_yaw)) * cos(glm::radians(cam.m_pitch));
+	front.y = sin(glm::radians(cam.m_pitch));
+	front.z = sin(glm::radians(cam.m_yaw)) * cos(glm::radians(cam.m_pitch));
+	
+	cam.SetFront(front);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	fov -= (float)yoffset;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 45.0f)
-		fov = 45.0f;
+	cam.UpdateFov(yoffset);
 }
 
 GLFWwindow* GLFWInit() {
@@ -88,7 +86,7 @@ GLFWwindow* GLFWInit() {
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;

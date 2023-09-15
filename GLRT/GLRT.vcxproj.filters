@@ -38,6 +38,12 @@
     <None Include="Shaders\rectShader.vert">
       <Filter>资源文件\Shaders</Filter>
     </None>
+    <None Include="Shaders\rtSphere.frag">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
+    <None Include="Shaders\rtSphere.vert">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shader.h">
@@ -59,6 +65,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="TimeRecord.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="light.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

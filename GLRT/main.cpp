@@ -13,7 +13,6 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
 #include <iostream>
 
 int main()
@@ -21,15 +20,23 @@ int main()
 	GLFWwindow* window = GLFWInit();
 	if (!window)
 		return 1;
-	RT_Screen screen("./Shaders/rectShader.vert", "./Shaders/rectShader.frag");
-	TimeRecord rec = TimeRecord();
+	RT_Screen screen("./Shaders/rtSphere.vert", "./Shaders/rtSphere.frag");
+	screen.m_screenShader->setVec3("sph.pos", glm::vec3(0.f, 0.f, 0.f));
+	screen.m_screenShader->setFloat("sph.r", 1.f);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
 		rec.Update(static_cast<float>(glfwGetTime()));
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		// update shader's camera
+		screen.m_screenShader->setVec3("cam.pos", cam.m_pos);
+		screen.m_screenShader->setVec3("cam.front", cam.m_front);
+		screen.m_screenShader->setVec3("cam.up", cam.m_up);
+		screen.m_screenShader->setVec3("cam.right", cam.m_right);
+		screen.m_screenShader->setFloat("cam.fov", cam.m_fov);
+		screen.m_screenShader->setFloat("cam.near", cam.m_near);
+		screen.m_screenShader->setFloat("cam.ratio", cam.m_ratio);
 		screen.Draw();
 
 		glfwSwapBuffers(window);

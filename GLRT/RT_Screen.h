@@ -6,10 +6,11 @@ class RT_Screen {
 private:
 	unsigned int m_VBO;
 	unsigned int m_VAO;
-	Shader *m_screenShader;
+	
 	//RT_Screen();
 
 public:
+	Shader* m_screenShader;
 	RT_Screen(Shader* shader) {
 		m_screenShader = shader;
 		const float ScreenVertices[] = {

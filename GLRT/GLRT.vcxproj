@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,11 +150,15 @@
     <None Include="Shaders\fragmentShader.glsl" />
     <None Include="Shaders\rectShader.frag" />
     <None Include="Shaders\rectShader.vert" />
+    <None Include="Shaders\rtSphere.frag" />
+    <None Include="Shaders\rtSphere.vert" />
     <None Include="Shaders\vertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="data.h" />
     <ClInclude Include="glfwInit.h" />
+    <ClInclude Include="light.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="RT_Screen.h" />
