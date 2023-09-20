@@ -21,29 +21,34 @@ struct Sphere {
 	float r;
 };
 
+struct DirLight {
+	vec3 dir;
+	vec3 color;
+	vec3 ambient;
+};
+
 uniform Camera cam;
 uniform Sphere sph;
+uniform DirLight lit;
 
 float IntersectSph(vec3 ro, vec3 rd, Sphere s) {
-	vec3 ray_2_sphere = ro - s.pos;
-	float a = dot(rd, rd);
-	float b = 2.0 * dot(ray_2_sphere, rd);
-	float c = dot(ray_2_sphere, ray_2_sphere) - (s.r * s.r);
-	float discriminant = b * b - 4.0 * a * c;
-	if (discriminant <= 0)
-		return -1.f;
-	// two intersect point
-    float t1 = (-b - sqrt(discriminant)) / (2.0 * a);
-    float t2 = (-b + sqrt(discriminant)) / (2.0 * a);
-	// closer one
-    return min(t1, t2);
-}
+	float A = dot(rd, rd);
+	float B = 2 * dot(rd, ro - s.pos);
+	float C = dot(ro - s.pos, ro - s.pos) - s.r * s.r;
+	float delta = B * B - 4 * A * C;
+	if (delta <= 0.)
+		return -1.;
 
-float IntersectPlaneZ(vec3 ro, vec3 rd, float z) {
-	if ((ro.z - z) * rd.z < 0)
-		return 1.f;
-	else
-		return -1.f;
+	float t1 = (-B - sqrt(B * B - 4 * A * C)) / (2 * A);
+	float t2 = (-B + sqrt(B * B - 4 * A * C)) / (2 * A);
+	// both <= 0
+	if (t1 <= 0 && t2 <= 0)
+		return -1.;
+	// both > 0
+	if (t1 > 0)
+		return t1;
+	// t1 <= 0, t2 > 0, the ray origin is in the sphere
+	return -1.;
 }
 
 void main()
@@ -56,18 +61,20 @@ void main()
 	float width = height * cam.ratio;
 	vec3 ray_origin = screen_center + screen_right_dir * width * FragPos.x / 2
 					+ screen_up_dir * height * FragPos.y / 2;
+	
 	vec3 ray_dir = normalize(ray_origin - cam.pos);
-
-	// intersect with the scene, 
-	// suppose the sphere is at the center of the world
-	// light is a point light
-	//float t = IntersectSph(ray_origin, ray_dir, sph);
-	float t = IntersectPlaneZ(ray_origin, ray_dir, 0.f);
+	
+	// intersect with the scene
+	float t = IntersectSph(ray_origin, ray_dir, sph);
+	if (t <= 0) {
+		FragColor = vec4(0.f, 0.f, 0.f, 1.f);
+		return;
+	}
+	
 	vec3 pos = ray_origin + t * ray_dir;
+	vec3 normal = normalize(pos - sph.pos);
+	float diff = max(dot(normal, normalize(-lit.dir)), 0);
+	vec3 color = diff * lit.color * 0.7 + lit.ambient * 0.3;
+	FragColor = vec4(color, 1.f);
 
-	// just test
-	if (t >= 0.f)
-		FragColor = vec4(1.f, 1.f, 1.f, 1.f);
-	else
-		FragColor = vec4(0.2f, 0.4f, 0.1f, 1.f);
 }

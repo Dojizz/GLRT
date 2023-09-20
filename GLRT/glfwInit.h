@@ -55,11 +55,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 		cam.m_pitch = -89.0f;
 
 	glm::vec3 front;
+	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 	front.x = cos(glm::radians(cam.m_yaw)) * cos(glm::radians(cam.m_pitch));
 	front.y = sin(glm::radians(cam.m_pitch));
 	front.z = sin(glm::radians(cam.m_yaw)) * cos(glm::radians(cam.m_pitch));
 	
 	cam.SetFront(front);
+	cam.m_right = glm::normalize(glm::cross(front, up));
+	cam.m_up = glm::normalize(glm::cross(cam.m_right, cam.m_front));
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
