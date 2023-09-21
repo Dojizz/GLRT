@@ -17,6 +17,10 @@ void processInput(GLFWwindow* window)
 		cam.Move(camera_move_length, cam.GetRight() * (-camera_move_length));
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		cam.Move(camera_move_length, cam.GetRight() * (camera_move_length));
+	if (hide_cursor)
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	else
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -27,6 +31,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
+	if (!hide_cursor)
+		return;
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
 
@@ -65,6 +71,14 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	cam.m_up = glm::normalize(glm::cross(cam.m_right, cam.m_front));
 }
 
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
+		hide_cursor = true;
+	else if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+		hide_cursor = false;
+	std::cout << hide_cursor << std::endl;
+}
+
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	cam.UpdateFov(yoffset);
@@ -88,6 +102,7 @@ GLFWwindow* GLFWInit() {
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
 	//glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

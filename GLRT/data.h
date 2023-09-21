@@ -15,3 +15,5 @@ const unsigned int SCR_HEIGHT = 800;
 
 float lastX = 800.0f / 2.0;
 float lastY = 600.0 / 2.0;
+
+bool hide_cursor = false;
