@@ -30,6 +30,7 @@ struct DirLight {
 uniform Camera cam;
 uniform Sphere sph;
 uniform DirLight lit;
+uniform vec3 sphere_color;
 
 float IntersectSph(vec3 ro, vec3 rd, Sphere s) {
 	float A = dot(rd, rd);
@@ -75,6 +76,7 @@ void main()
 	vec3 normal = normalize(pos - sph.pos);
 	float diff = max(dot(normal, normalize(-lit.dir)), 0);
 	vec3 color = diff * lit.color * 0.7 + lit.ambient * 0.3;
-	FragColor = vec4(color, 1.f);
+
+	FragColor = vec4(color * sphere_color, 1.f);
 
 }
