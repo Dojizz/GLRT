@@ -65,10 +65,16 @@
     <None Include="Shaders\rectShader.vert">
       <Filter>资源文件\Shaders</Filter>
     </None>
-    <None Include="Shaders\rtSphere.frag">
+    <None Include="Shaders\RayTracing.frag">
       <Filter>资源文件\Shaders</Filter>
     </None>
-    <None Include="Shaders\rtSphere.vert">
+    <None Include="Shaders\RayTracing.vert">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
+    <None Include="Shaders\ScreenShader.frag">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
+    <None Include="Shaders\ScreenShader.vert">
       <Filter>资源文件\Shaders</Filter>
     </None>
   </ItemGroup>

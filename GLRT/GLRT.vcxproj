@@ -157,8 +157,10 @@
     <None Include="Shaders\fragmentShader.glsl" />
     <None Include="Shaders\rectShader.frag" />
     <None Include="Shaders\rectShader.vert" />
-    <None Include="Shaders\rtSphere.frag" />
-    <None Include="Shaders\rtSphere.vert" />
+    <None Include="Shaders\RayTracing.frag" />
+    <None Include="Shaders\RayTracing.vert" />
+    <None Include="Shaders\ScreenShader.frag" />
+    <None Include="Shaders\ScreenShader.vert" />
     <None Include="Shaders\vertexShader.glsl" />
   </ItemGroup>
   <ItemGroup>

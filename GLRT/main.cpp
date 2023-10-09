@@ -24,7 +24,8 @@ int main()
 	GLFWwindow* window = GLFWInit();
 	if (!window)
 		return 1;
-	RT_Screen screen("./Shaders/rtSphere.vert", "./Shaders/rtSphere.frag");
+	RT_Screen buffer_screen("./Shaders/RayTracing.vert", "./Shaders/RayTracing.frag");
+	RT_Screen screen("./Shaders/ScreenShader.vert", "./Shaders/ScreenShader.frag");
 
 	// imgui initialization
 	IMGUI_CHECKVERSION();
@@ -34,8 +35,12 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 	
+	// data initialize
 	float radius = 1.f;
-	float sphere_color[3] = { 0.3, 0.7, 0.2 };
+	float sphere_color[3] = { 0.5, 0.5, 0.5 };
+	ScreenFBO fbo;
+	fbo.Configuration(SCR_WIDTH, SCR_HEIGHT);
+	
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -48,20 +53,28 @@ int main()
 		ImGui::NewFrame();
 
 		// update shader's camera
+		buffer_screen.m_screenShader->use();
+		buffer_screen.m_screenShader->setVec3("sph.pos", glm::vec3(0.f, 0.f, 0.f));
+		buffer_screen.m_screenShader->setFloat("sph.r", radius);
+		buffer_screen.m_screenShader->setVec3("sphere_color", glm::vec3(sphere_color[0], sphere_color[1], sphere_color[2]));
+		buffer_screen.m_screenShader->setVec3("lit.dir", glm::vec3(-1.f, -1.f, -1.f));
+		buffer_screen.m_screenShader->setVec3("lit.color", glm::vec3(1.f, 1.f, 1.f));
+		buffer_screen.m_screenShader->setVec3("lit.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
+		buffer_screen.m_screenShader->setVec3("cam.pos", cam.m_pos);
+		buffer_screen.m_screenShader->setVec3("cam.front", cam.m_front);
+		buffer_screen.m_screenShader->setVec3("cam.up", cam.m_up);
+		buffer_screen.m_screenShader->setVec3("cam.right", cam.m_right);
+		buffer_screen.m_screenShader->setFloat("cam.fov", cam.m_fov);
+		buffer_screen.m_screenShader->setFloat("cam.near", cam.m_near);
+		buffer_screen.m_screenShader->setFloat("cam.ratio", cam.m_ratio);
+		// draw to fbo
+		fbo.Bind();
+		buffer_screen.Draw();
+		fbo.Unbind();
+		fbo.BindAsTexture();
+		// draw to screen
 		screen.m_screenShader->use();
-		screen.m_screenShader->setVec3("sph.pos", glm::vec3(0.f, 0.f, 0.f));
-		screen.m_screenShader->setFloat("sph.r", radius);
-		screen.m_screenShader->setVec3("sphere_color", glm::vec3(sphere_color[0], sphere_color[1], sphere_color[2]));
-		screen.m_screenShader->setVec3("lit.dir", glm::vec3(-1.f, -1.f, -1.f));
-		screen.m_screenShader->setVec3("lit.color", glm::vec3(1.f, 1.f, 1.f));
-		screen.m_screenShader->setVec3("lit.ambient", glm::vec3(0.5f, 0.5f, 0.5f));
-		screen.m_screenShader->setVec3("cam.pos", cam.m_pos);
-		screen.m_screenShader->setVec3("cam.front", cam.m_front);
-		screen.m_screenShader->setVec3("cam.up", cam.m_up);
-		screen.m_screenShader->setVec3("cam.right", cam.m_right);
-		screen.m_screenShader->setFloat("cam.fov", cam.m_fov);
-		screen.m_screenShader->setFloat("cam.near", cam.m_near);
-		screen.m_screenShader->setFloat("cam.ratio", cam.m_ratio);
+		screen.m_screenShader->setInt("tex", 0);
 		screen.Draw();
 
 		ImGui::Begin("ImGUI window");
@@ -76,6 +89,7 @@ int main()
 		glfwPollEvents();
 	}
 
+	fbo.Delete();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
