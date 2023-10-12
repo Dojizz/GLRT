@@ -19,5 +19,4 @@ public:
 	float GetDeltaTime() {
 		return m_delta_time;
 	}
-
 };

@@ -1,4 +1,5 @@
 #pragma once
+#include "glad/glad.h"
 #include <string>
 #include "shader.h"
 
@@ -7,8 +8,6 @@ private:
 	unsigned int m_VBO;
 	unsigned int m_VAO;
 	
-	//RT_Screen();
-
 public:
 	Shader* m_screenShader;
 	RT_Screen(Shader* shader) {
@@ -77,8 +76,13 @@ public:
 	unsigned int m_framebuffer;
 	unsigned int m_texture_color_buffer;
 	unsigned int m_rbo;
+	unsigned int m_width;
+	unsigned int m_height;
 	bool m_config = false;
+
 	void Configuration(int scr_width, int scr_height) {
+		if (m_config)
+			Delete();
 		// frame buffer
 		glGenFramebuffers(1, &m_framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
@@ -100,6 +104,8 @@ public:
 		}
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		m_config = true;
+		m_width = scr_width;
+		m_height = scr_height;
 	}
 
 	void Bind() {
@@ -107,6 +113,19 @@ public:
 			return;
 		glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 	}
+
+	void BindAsRead() {
+		if (!m_config)
+			return;
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, m_framebuffer);
+	}
+
+	void BindAsDraw() {
+		if (!m_config)
+			return;
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_framebuffer);
+	}
+
 
 	void Unbind() {
 		if (!m_config)
@@ -129,4 +148,57 @@ public:
 		glDeleteTextures(1, &m_texture_color_buffer);
 		m_config = false;
 	}
+};
+
+
+// manage the three fbo during ray tracing rendering
+class RenderBuffer {
+private:
+	ScreenFBO m_hist_fbo, m_pres_fbo, m_merge_fbo;
+	unsigned int m_width;
+	unsigned int m_height;
+public:
+	RenderBuffer() {}
+
+	void Configuration(int scr_width, int scr_height) {
+		// three fbo stay the same size
+		m_hist_fbo.Configuration(scr_width, scr_height);
+		m_pres_fbo.Configuration(scr_width, scr_height);
+		m_merge_fbo.Configuration(scr_width, scr_height);
+		m_width = scr_width;
+		m_height = scr_height;
+	}
+
+	// use buffer screen to render new buffer & write to 0 texture
+	void RenderNewFrame(RT_Screen& buffer_screen, RT_Screen& merge_screen, unsigned int loop_num) {
+		m_pres_fbo.Bind();
+		buffer_screen.Draw();
+		m_pres_fbo.Unbind();
+		m_pres_fbo.BindAsTexture(0);
+		if (loop_num == 1) {
+			m_pres_fbo.BindAsRead();
+			m_hist_fbo.BindAsDraw();
+			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+		else {
+			// use hist + pres, draw to merge_fbo
+			m_hist_fbo.BindAsTexture(1);
+			m_merge_fbo.Bind();
+			// draw merge result to history fbo
+			merge_screen.m_screenShader->use();
+			merge_screen.m_screenShader->setInt("loop_num", loop_num);
+			merge_screen.m_screenShader->setInt("pres_tex", 0);
+			merge_screen.m_screenShader->setInt("hist_tex", 1);
+			merge_screen.Draw();
+			m_merge_fbo.Unbind();
+			// copy merge_fbo to hist_fbo
+			m_merge_fbo.BindAsRead();
+			m_hist_fbo.BindAsDraw();
+			glBlitFramebuffer(0, 0, m_width, m_height, 0, 0, m_width, m_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		}
+		m_hist_fbo.BindAsTexture(0);
+	}
+
 };

@@ -59,10 +59,10 @@
     <None Include="Shaders\vertexShader.glsl">
       <Filter>资源文件\Shaders</Filter>
     </None>
-    <None Include="Shaders\rectShader.frag">
+    <None Include="Shaders\RectShader.frag">
       <Filter>资源文件\Shaders</Filter>
     </None>
-    <None Include="Shaders\rectShader.vert">
+    <None Include="Shaders\RectShader.vert">
       <Filter>资源文件\Shaders</Filter>
     </None>
     <None Include="Shaders\RayTracing.frag">
@@ -77,9 +77,15 @@
     <None Include="Shaders\ScreenShader.vert">
       <Filter>资源文件\Shaders</Filter>
     </None>
+    <None Include="Shaders\MergeShader.vert">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
+    <None Include="Shaders\MergeShader.frag">
+      <Filter>资源文件\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="shader.h">
+    <ClInclude Include="Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
@@ -88,10 +94,10 @@
     <ClInclude Include="Model.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="data.h">
+    <ClInclude Include="Data.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="glfwInit.h">
+    <ClInclude Include="GLFWInit.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="RT_Screen.h">
@@ -100,10 +106,7 @@
     <ClInclude Include="TimeRecord.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="light.h">
+    <ClInclude Include="Camera.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\imgui\imgui.h">
@@ -132,6 +135,9 @@
     </ClInclude>
     <ClInclude Include="..\include\imgui\imconfig.h">
       <Filter>头文件\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

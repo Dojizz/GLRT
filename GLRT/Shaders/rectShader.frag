@@ -4,6 +4,8 @@ out vec4 FragColor;
 in vec3 FragPos;
 in vec2 TexCoords;
 
+uniform float control_rand;
+
 uint wseed;
 float randcore(uint seed) {
 	seed = (seed ^ uint(61)) ^ (seed >> uint(16));
@@ -20,7 +22,7 @@ float rand() {
 
 void main()
 {
-	wseed = uint(float(69557857) * (TexCoords.x * TexCoords.y));
+	wseed = uint(float(69557857) * (TexCoords.x * TexCoords.y * control_rand));
 	vec2 ScreenPos = vec2(FragPos[0], FragPos[1]);
 	if (distance(vec2(FragPos[0], FragPos[1]), vec2(0.f, 0.f)) < 0.4)
 		FragColor = vec4(rand(), rand(), rand(), 1.f);

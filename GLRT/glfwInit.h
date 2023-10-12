@@ -1,7 +1,7 @@
 #pragma once
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "data.h"
+#include "Data.h"
 
 void processInput(GLFWwindow* window)
 {
@@ -27,48 +27,48 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 	cam.SetWidthHeight(width, height);
+	SCR_WIDTH = width;
+	SCR_HEIGHT = height;
+	render_buffer.Configuration(SCR_WIDTH, SCR_HEIGHT);
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	if (!hide_cursor)
+	if (!hide_cursor) {
+		first_mouse = true;
 		return;
+	}
+		
 	float xpos = static_cast<float>(xposIn);
 	float ypos = static_cast<float>(yposIn);
 
-	if (firstMouse)
+	if (first_mouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
+		last_x = xpos;
+		last_y = ypos;
+		first_mouse = false;
+		return;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
-
-	float sensitivity = 0.03f;
-	xoffset *= sensitivity;
-	yoffset *= sensitivity;
-
-	cam.m_yaw += xoffset;
-	cam.m_pitch += yoffset;
-
-	if (cam.m_pitch > 89.0f)
-		cam.m_pitch = 89.0f;
-	if (cam.m_pitch < -89.0f)
-		cam.m_pitch = -89.0f;
+	float xoffset = xpos - last_x;
+	float yoffset = last_y - ypos;
+	last_x = xpos;
+	last_y = ypos;
+	xoffset *= mouse_sensitivity;
+	yoffset *= mouse_sensitivity;
+	cam.UpdateYaw(xoffset);
+	cam.UpdatePitch(yoffset);
 
 	glm::vec3 front;
 	glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-	front.x = cos(glm::radians(cam.m_yaw)) * cos(glm::radians(cam.m_pitch));
-	front.y = sin(glm::radians(cam.m_pitch));
-	front.z = sin(glm::radians(cam.m_yaw)) * cos(glm::radians(cam.m_pitch));
+	front.x = cos(glm::radians(cam.GetYaw())) * cos(glm::radians(cam.GetPitch()));
+	front.y = sin(glm::radians(cam.GetPitch()));
+	front.z = sin(glm::radians(cam.GetYaw())) * cos(glm::radians(cam.GetPitch()));
 	
 	cam.SetFront(front);
-	cam.m_right = glm::normalize(glm::cross(front, up));
-	cam.m_up = glm::normalize(glm::cross(cam.m_right, cam.m_front));
+	cam.SetRight(glm::cross(front, up));
+	cam.SetUp(glm::cross(cam.GetRight(), cam.GetFront()));
+	cam.ResetLoopNum();
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {

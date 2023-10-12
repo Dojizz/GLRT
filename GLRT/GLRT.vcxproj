@@ -133,6 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -155,8 +156,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\fragmentShader.glsl" />
-    <None Include="Shaders\rectShader.frag" />
-    <None Include="Shaders\rectShader.vert" />
+    <None Include="Shaders\MergeShader.frag" />
+    <None Include="Shaders\MergeShader.vert" />
+    <None Include="Shaders\RectShader.frag" />
+    <None Include="Shaders\RectShader.vert" />
     <None Include="Shaders\RayTracing.frag" />
     <None Include="Shaders\RayTracing.vert" />
     <None Include="Shaders\ScreenShader.frag" />
@@ -173,15 +176,15 @@
     <ClInclude Include="..\include\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\include\imgui\imstb_textedit.h" />
     <ClInclude Include="..\include\imgui\imstb_truetype.h" />
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="data.h" />
-    <ClInclude Include="glfwInit.h" />
-    <ClInclude Include="light.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Data.h" />
+    <ClInclude Include="GLFWInit.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="RT_Screen.h" />
-    <ClInclude Include="shader.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="TimeRecord.h" />
+    <ClInclude Include="Tool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,19 +1,24 @@
 #pragma once
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "RT_Screen.h"
-#include "camera.h"
+#include "Camera.h"
 #include "TimeRecord.h"
 
 TimeRecord rec = TimeRecord();
 Camera cam = Camera();
+const float Camera::min_fov = 1.f;
+const float Camera::max_fov = 45.f;
+const float Camera::min_speed = 0.001f;
+const float Camera::max_speed = 0.01f;
 
-bool firstMouse = true;
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 800;
+bool first_mouse = true;
+unsigned int SCR_WIDTH = 1200;
+unsigned int SCR_HEIGHT = 800;
 
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
+float last_x = SCR_WIDTH / 2.0;
+float last_y = SCR_HEIGHT / 2.0;
 
+float mouse_sensitivity = 0.03f;
 bool hide_cursor = false;
+
+RenderBuffer render_buffer;
